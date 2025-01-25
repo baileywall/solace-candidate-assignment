@@ -50,7 +50,18 @@ export async function GET(req: NextRequest) {
 
   const advocatesTotalCount = await db
     .select({ count: count() })
-    .from(advocates);
+    .from(advocates)
+    .where(
+      searchTerm
+        ? or(
+            ilike(advocates.firstName, `%${searchTerm}%`),
+            ilike(advocates.lastName, `%${searchTerm}%`),
+            ilike(advocates.city, `%${searchTerm}%`),
+            ilike(advocates.degree, `%${searchTerm}%`),
+            sql`${advocates.specialties}::text ILIKE ${`%${searchTerm}%`}`
+          )
+        : undefined
+    );
 
   return Response.json({
     data: {

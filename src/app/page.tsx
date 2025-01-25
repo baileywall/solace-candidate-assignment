@@ -3,8 +3,10 @@
 import { useDebounce } from "@/util/hooks/useDebounce";
 import { useFetchAdvocates } from "@/util/hooks/useFetchAdvocates";
 import { useState } from "react";
+import parsePhoneNumber from "libphonenumber-js";
 
 const LIMIT = 10;
+const US_PHONE_NUMBER_PREFIX = "+1";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,54 +20,73 @@ export default function Home() {
   );
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
+    <main className="m-12">
+      <h1 className="text-4xl">Solace Advocates</h1>
       <br />
       <br />
-      <div>
-        <p>Search</p>
+      <div className="flex space-x-4">
+        <p>Search for an Advocate:</p>
         <input
-          style={{ border: "1px solid black" }}
+          className="border border-solid border-black"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       <br />
       <br />
-      <table>
+      <table className="border border-solid border-black w-full">
         <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
+          <tr className="border border-solid border-black">
+            <th className="px-4 border border-slate-500">First Name</th>
+            <th className="px-4 border border-slate-500">Last Name</th>
+            <th className="px-4 border border-slate-500">City</th>
+            <th className="px-4 border border-slate-500">Degree</th>
+            <th className="px-4 border border-slate-500">Specialties</th>
+            <th className="px-4 border border-slate-500">
+              Years of Experience
+            </th>
+            <th className="px-4 border border-slate-500">Phone Number</th>
           </tr>
         </thead>
         <tbody>
-          {advocates.map((advocate) => {
+          {advocates.map((advocate, index) => {
             return (
               <tr
+                className={index % 2 === 1 ? "bg-slate-300" : "bg-slate-100"}
                 key={`advocate-table-row-${advocate.firstName}-${advocate.lastName}`}
               >
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.firstName}
+                </td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.lastName}
+                </td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.city}
+                </td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.degree}
+                </td>
+                <td className="px-4 border border-slate-500">
                   {advocate.specialties?.map((s) => (
                     <div key={`advocate-speciality-${s}`}>{s}</div>
                   ))}
                 </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.yearsOfExperience}
+                </td>
+                <td className="px-4 border border-slate-500">
+                  {advocate.phoneNumber
+                    ? parsePhoneNumber(
+                        US_PHONE_NUMBER_PREFIX + advocate.phoneNumber.toString()
+                      )?.formatNational()
+                    : null}
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div>
+      <div className="pt-4 w-full justify-center flex space-x-4">
         {totalCount > 0
           ? Array(Math.ceil(totalCount / LIMIT))
               .fill("")
@@ -75,11 +96,9 @@ export default function Home() {
                     onClick={() => {
                       setPage(index);
                     }}
-                    style={{
-                      width: "50px",
-                      border: "1px solid black",
-                      backgroundColor: page === index ? "gray" : "",
-                    }}
+                    className={`w-8 border border-slate-500 rounded-md ${
+                      page === index ? "bg-slate-300" : ""
+                    }`}
                     key={`pagination-button-${index}`}
                   >
                     {index + 1}
