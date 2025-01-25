@@ -6,6 +6,7 @@ import { useState } from "react";
 import parsePhoneNumber from "libphonenumber-js";
 
 const LIMIT = 10;
+const US_PHONE_NUMBER_PREFIX = "+1";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,7 +77,7 @@ export default function Home() {
                 <td className="px-4 border border-slate-500">
                   {advocate.phoneNumber
                     ? parsePhoneNumber(
-                        "+1" + advocate.phoneNumber.toString()
+                        US_PHONE_NUMBER_PREFIX + advocate.phoneNumber.toString()
                       )?.formatNational()
                     : null}
                 </td>
